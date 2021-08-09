@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service;
+namespace App;
 
 use App\Format\FormatInterface;
 

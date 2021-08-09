@@ -6,9 +6,9 @@ use App\Annotations\Route;
 use App\Service\Serializer;
 
 /**
- * @Route(route="/")
+ * @Route(route="/posts")
  */
-class IndexController
+class PostController
 {
     public function __construct(Serializer $serializer)
     {
@@ -21,7 +21,18 @@ class IndexController
     public function index()
     {
         return $this->serializer->serialize([
-            'Action' => 'Index',
+            'Action' => 'Post',
+            'Time' => time(),
+        ]);
+    }
+
+    /**
+     * @Route(route="/one")
+     */
+    public function one()
+    {
+        return $this->serializer->serialize([
+            'Action' => 'PostOne',
             'Time' => time(),
         ]);
     }
