@@ -1,0 +1,41 @@
+version: '3.7'
+services: 
+  symfony:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+    container_name: symfony
+    expose:
+      - 80
+      - 443
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./symfony:/var/www/html
+    networks:
+      - symfony
+  mysql:
+    image: mysql:5.7.29
+    restart: unless-stopped
+    tty: true
+    ports:
+      - 3306:3306
+    volumes:
+      - ./data:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_DATABASE: symfony
+      MYSQL_ROOT_PASSWORD: root
+    networks:
+      - symfony
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+        - "8081:80"
+    environment:
+        MYSQL_ROOT_PASSWORD: root
+        PMA_HOST: mysql
+    networks:
+      - symfony
+networks:
+  symfony:
