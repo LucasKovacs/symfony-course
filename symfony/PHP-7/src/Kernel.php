@@ -3,7 +3,6 @@
 namespace App;
 
 use App\Annotations\Route;
-use App\Container;
 use App\Format\FormatInterface;
 use App\Format\JSON;
 use App\Format\XML;
@@ -13,7 +12,7 @@ use Doctrine\Common\Annotations\AnnotationRegistry;
 class Kernel
 {
     private $container;
-    private $routes;
+    private $routes = [];
 
     public function __construct()
     {
@@ -28,9 +27,11 @@ class Kernel
     public function boot()
     {
         $this->bootContainer($this->container);
+
+        return $this;
     }
 
-    public function bootContainer(Container $container)
+    private function bootContainer(Container $container)
     {
         $container->addService('format.json', function () use ($container) {
             return new JSON();
@@ -51,35 +52,38 @@ class Kernel
 
         $routes = [];
 
-        $container->loadServices('App\\Controller', function (string $serviceName, \ReflectionClass $class) use ($reader, &$routes) {
-            $route = $reader->getClassAnnotation($class, Route::class);
-
-            if (!$route) {
-                return;
-            }
-
-            $baseRoute = $route->route;
-
-            foreach ($class->getMethod() as $method) {
-                $route = $reader->getMethodAnnotation($method, Route::class);
+        $container->loadServices(
+            'App\\Controller',
+            function (string $serviceName, \ReflectionClass $class) use ($reader, &$routes) {
+                $route = $reader->getClassAnnotation($class, Route::class);
 
                 if (!$route) {
-                    continue;
+                    return;
                 }
 
-                $routes[str_replace('//', '/', $baseRoute . $route->route)] = [
-                    'service' => $serviceName,
-                    'method' => $method->getName(),
-                ];
+                $baseRoute = $route->route;
+
+                foreach ($class->getMethods() as $method) {
+                    $route = $reader->getMethodAnnotation($method, Route::class);
+
+                    if (!$route) {
+                        continue;
+                    }
+
+                    $routes[str_replace('//', '/', $baseRoute . $route->route)] = [
+                        'service' => $serviceName,
+                        'method' => $method->getName(),
+                    ];
+                }
             }
-        });
+        );
 
         $this->routes = $routes;
     }
 
     public function handleRequest()
     {
-        $uri = $_SERVER['REQUEST_URI'];
+        $uri = str_replace('/PHP-7/public', '', $_SERVER['REQUEST_URI']);
 
         if (isset($this->routes[$uri])) {
             $route = $this->routes[$uri];
