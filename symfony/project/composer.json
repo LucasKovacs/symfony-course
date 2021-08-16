@@ -11,6 +11,7 @@
         "doctrine/doctrine-bundle": "^1.2",
         "doctrine/doctrine-migrations-bundle": "^1.2",
         "doctrine/orm": "^2",
+        "easycorp/easyadmin-bundle": "^1.17",
         "phpdocumentor/reflection-docblock": "^5.2",
         "sensio/framework-extra-bundle": "^6.1",
         "symfony/console": "4.4.*",
