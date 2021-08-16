@@ -1,0 +1,5 @@
+{
+    "symfony/orm-pack": {
+        "version": "v1.0.8"
+    }
+}
