@@ -6,11 +6,22 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *  itemOperations={"get"},
+ *  collectionOperations={"post"},
+ *  normalizationContext={
+ *   "groups": {"read"}
+ *  }
+ * )
  * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @UniqueEntity("username")
+ * @UniqueEntity("email")
  */
 class User implements UserInterface
 {
@@ -18,36 +29,62 @@ class User implements UserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"read"})
+     * @Assert\NotBlank()
+     * @Assert\Length(min=6, max=255)
      */
     private $username;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
+     * @Assert\Regex(
+     *  pattern="/(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).{7,}/",
+     *  message="Password must be 7 characters long and contain at least one digit, one uppercase letter and one lowercase letter",
+     * )
      */
     private $password;
 
     /**
+     * @Assert\NotBlank()
+     * @Assert\Expression(
+     *  "this.getPassword() === this.getRetypedPassword()",
+     *  message="Password does not match",
+     * )
+     */
+    private $retypedPassword;
+
+    /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"read"})
+     * @Assert\NotBlank()
+     * @Assert\Length(min=5, max=255)
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
+     * @Assert\Email()
+     * @Assert\Length(min=6, max=255)
      */
     private $email;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\BlogPost", mappedBy="author")
+     * @Groups({"read"})
      */
     private $posts;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="author")
+     * @Groups({"read"})
      */
     private $comments;
 
@@ -193,5 +230,25 @@ class User implements UserInterface
      */
     public function eraseCredentials()
     {
+    }
+
+    /**
+     * Get the value of retyped password
+     */
+    public function getRetypedPassword()
+    {
+        return $this->retypedPassword;
+    }
+
+    /**
+     * Set the value of retyped password
+     *
+     * @return  self
+     */
+    public function setRetypedPassword($retypedPassword): self
+    {
+        $this->retypedPassword = $retypedPassword;
+
+        return $this;
     }
 }
