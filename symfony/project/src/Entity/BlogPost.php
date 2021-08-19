@@ -2,8 +2,14 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\RangeFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Serializer\Filter\PropertyFilter;
 use App\Entity\Image;
 use App\Repository\BlogPostRepository;
 use DateTimeInterface;
@@ -18,7 +24,47 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=BlogPostRepository::class)
+ * @ApiFilter(
+ *      SearchFilter::class,
+ *      properties={
+ *          "id": "exact",
+ *          "title": "partial",
+ *          "content": "partial",
+ *          "author": "exact",
+ *          "author.name": "partial"
+ *      }
+ * )
+ * @ApiFilter(
+ *      DateFilter::class,
+ *      properties={
+ *          "published"
+ *      }
+ * )
+ * @ApiFilter(
+ *      RangeFilter::class,
+ *      properties={
+ *          "id"
+ *      }
+ * )
+ * @ApiFilter(
+ *      OrderFilter::class,
+ *      properties={
+ *          "id",
+ *          "published",
+ *          "title"
+ *      },
+ *      arguments={"orderParameterName"="_order"}
+ * )
+ * @ApiFilter(
+ *      PropertyFilter::class,
+ *      arguments={
+ *          "parameterName": "properties",
+ *          "overrideDefaultProperties": false,
+ *          "whitelist": {"id", "author", "slug", "title", "content"}
+ *      }
+ * )
  * @ApiResource(
+ *  attributes={"order"={"published": "DESC"}},
  *  itemOperations={
  *      "get"={
  *           "normalization_context"={
@@ -45,8 +91,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 class BlogPost implements AuthoredEntityInterface, PublishedDateEntityInterface
 {
     /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
+     * @ORM\Id()
+     * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      * @Groups({"get-blog-post-with-author"})
      */
