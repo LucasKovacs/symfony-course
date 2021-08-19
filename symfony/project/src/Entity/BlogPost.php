@@ -4,11 +4,14 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
+use App\Entity\Image;
 use App\Repository\BlogPostRepository;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\JoinTable;
+use Doctrine\ORM\Mapping\ManyToMany;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -93,9 +96,18 @@ class BlogPost implements AuthoredEntityInterface, PublishedDateEntityInterface
      */
     private $comment;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Image")
+     * @ORM\JoinTable()
+     * @ApiSubresource()
+     * @Groups({"post", "get-blog-post-with-author"})
+     */
+    private $images;
+
     public function __construct()
     {
         $this->comment = new ArrayCollection;
+        $this->images = new ArrayCollection;
     }
 
     public function getId(): ?int
@@ -193,5 +205,35 @@ class BlogPost implements AuthoredEntityInterface, PublishedDateEntityInterface
         $this->comment = $comment;
 
         return $this;
+    }
+
+    /**
+     * Get the value of images
+     */
+    public function getImages(): Collection
+    {
+        return $this->images;
+    }
+
+    /**
+     * Add image to collection
+     *
+     * @param Image $image
+     * @return void
+     */
+    public function addImage(Image $image)
+    {
+        $this->images->add($image);
+    }
+
+    /**
+     * Remove image from collection
+     *
+     * @param Image $image
+     * @return void
+     */
+    public function removeImage(Image $image)
+    {
+        $this->images->removeElement($image);
     }
 }
