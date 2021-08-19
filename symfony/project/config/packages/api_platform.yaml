@@ -7,5 +7,17 @@ api_platform:
         versions: [3]
     # eager_loading:
     #     enabled: true
-    # collection:
+    collection:
     #     order_parameter_name: '_order'
+        pagination:
+    #         enabled: false
+    #         page_parameter_name: _page
+    #         client_enabled: true
+    #         enabled_parameter_name: pagination
+            items_per_page: 10
+            client_items_per_page: false # Disabled by default
+            items_per_page_parameter_name: itemsPerPage
+            maximum_items_per_page: 20
+            partial: false
+            client_partial: true
+            partial_parameter_name: 'partial'
