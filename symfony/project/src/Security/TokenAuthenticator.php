@@ -10,8 +10,6 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 class TokenAuthenticator extends JWTTokenAuthenticator
 {
     /**
-     * Undocumented function
-     *
      * @param PreAuthenticationJWTUserToken $preAuthToken
      * @param UserProviderInterface $userProvider
      * @return void
