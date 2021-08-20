@@ -38,7 +38,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "controller"=ResetPasswordAction::class,
  *          "denormalization_context"={
  *              "groups"={"put-reset-password"}
- *          }
+ *          },
+ *          "validation_groups"={"put-reset-password"}
  *      }
  *  },
  *  collectionOperations={
@@ -48,7 +49,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          },
  *          "normalization_context"={
  *              "groups"={"get"}
- *          }
+ *          },
+ *          "validation_groups"={"post"}
  *      }
  *  }
  * )
