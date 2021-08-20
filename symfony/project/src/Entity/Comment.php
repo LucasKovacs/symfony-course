@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Entity\BlogPost;
 use App\Repository\CommentRepository;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
@@ -116,7 +117,7 @@ class Comment implements AuthoredEntityInterface, PublishedDateEntityInterface
      *
      * @return UserInterface
      */
-    public function getAuthor(): UserInterface
+    public function getAuthor(): ?UserInterface
     {
         return $this->author;
     }
@@ -138,7 +139,7 @@ class Comment implements AuthoredEntityInterface, PublishedDateEntityInterface
     /**
      * Get the value of blogPost
      */
-    public function getBlogPost()
+    public function getBlogPost(): ?BlogPost
     {
         return $this->blogPost;
     }
@@ -148,10 +149,15 @@ class Comment implements AuthoredEntityInterface, PublishedDateEntityInterface
      *
      * @return  self
      */
-    public function setBlogPost($blogPost)
+    public function setBlogPost($blogPost): self
     {
         $this->blogPost = $blogPost;
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return substr($this->content, 0, 20) . '...';
     }
 }
