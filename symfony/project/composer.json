@@ -69,6 +69,9 @@
         ],
         "post-update-cmd": [
             "@auto-scripts"
+        ],
+        "tests": [
+            "php bin/phpunit tests/"
         ]
     },
     "conflict": {
@@ -83,6 +86,7 @@
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.0",
         "fzaninotto/faker": "^1.8",
-        "symfony/maker-bundle": "^1.5"
+        "symfony/maker-bundle": "^1.5",
+        "symfony/phpunit-bridge": "^4.1.4"
     }
 }
