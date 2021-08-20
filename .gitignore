@@ -1,3 +1,2 @@
 
-*.jpg
-*.png
+symfony/project/public/images/*
