@@ -47,7 +47,7 @@ class UserAttributeNormalizer implements ContextAwareNormalizerInterface, Serial
 
     private function isUserHimself($object)
     {
-        return $object->getUsername() === $this->tokenStorage->getToken()->getUser()->getUsername();
+        return $object->getUsername() === $this->tokenStorage->getToken()->getUsername();
     }
 
     private function passOn($object, $format, $context)
