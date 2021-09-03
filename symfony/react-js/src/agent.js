@@ -1,16 +1,16 @@
-import superagentPromise from 'superagent-promise'
-import _superagent from 'superagent'
+import superagentPromise from 'superagent-promise';
+import _superagent from 'superagent';
 
 const superagent = superagentPromise(_superagent, global.Promise);
-const API_ROOT = 'http://127.0.0.1:8000/api'
-const responseBody = response => response.body
+const API_ROOT = 'http://127.0.0.1:8000/api';
+const responseBody = response => response.body;
 
 let token = null;
 
 const tokenPlugin = secured => {
     return (request) => {
         if (token && secured) {
-            request.set('Authorization', `Bearer $(token)`);
+            request.set('Authorization', `Bearer ${token}`);
         }
     };
 };
