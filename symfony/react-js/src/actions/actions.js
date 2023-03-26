@@ -1,5 +1,5 @@
 import { requests } from "../agent";
-import { BLOG_POST_LIST_REQUEST, BLOG_POST_LIST_RECEIVED, BLOG_POST_LIST_ERROR, BLOG_POST_LIST_ADD, BLOG_POST_REQUEST, BLOG_POST_RECEIVED, BLOG_POST_ERROR, BLOG_POST_UNLOAD, COMMENT_LIST_REQUEST, COMMENT_LIST_RECEIVED, COMMENT_LIST_ERROR, COMMENT_LIST_UNLOAD, COMMENT_ADDED, USER_LOGIN_SUCCESS, USER_PROFILE_REQUEST, USER_PROFILE_ERROR, USER_PROFILE_RECEIVED, USER_SET_ID, USER_LOGOUT } from './constants'
+import { BLOG_POST_LIST_REQUEST, BLOG_POST_LIST_RECEIVED, BLOG_POST_LIST_ERROR, BLOG_POST_LIST_ADD, BLOG_POST_REQUEST, BLOG_POST_RECEIVED, BLOG_POST_ERROR, BLOG_POST_UNLOAD, COMMENT_LIST_REQUEST, COMMENT_LIST_RECEIVED, COMMENT_LIST_ERROR, COMMENT_LIST_UNLOAD, COMMENT_ADDED, USER_LOGIN_SUCCESS, USER_PROFILE_REQUEST, USER_PROFILE_ERROR, USER_PROFILE_RECEIVED, USER_SET_ID, USER_LOGOUT, BLOG_POST_LIST_SET_PAGE } from './constants'
 import { SubmissionError } from "redux-form";
 import { parseApiErrors } from "../apiUtils";
 
@@ -17,10 +17,15 @@ export const blogPostListError = (error) => ({
     error
 });
 
-export const blogPostListFetch = () => {
+export const blogPostListSetPage = (page) => ({
+    type: BLOG_POST_LIST_SET_PAGE,
+    page
+});
+
+export const blogPostListFetch = (page = 1) => {
     return (dispatch) => {
         dispatch(blogPostListRequest());
-        return requests.get('/blog_posts')
+        return requests.get(`/blog_posts?_page=${page}`)
             .then(response => dispatch(blogPostListReceived(response)))
             .catch(error => dispatch(blogPostListError(error)));
     }
@@ -94,7 +99,11 @@ export const commentAdd = (comment, blogPostId) => {
             blogPost: `/api/blog_posts/${blogPostId}`
         }).then(
             response => dispatch(commentAdded(response))
-        ).catch(error => {
+        ).catch((error) => {
+            if (401 === error.response.status) {
+                return dispatch(userLogout());
+            }
+
             throw new SubmissionError(parseApiErrors(error))
         })
     }

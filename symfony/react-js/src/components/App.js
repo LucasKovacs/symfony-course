@@ -54,7 +54,7 @@ class App extends React.Component {
                 <Switch>
                     <Route path="/login" component={LoginForm} />
                     <Route path="/blog-post/:id" component={BlogPostContainer} />
-                    <Route path="/" component={BlogPostListContainer} /> {/* Must be the last rule or we need to add an "exact" parameter */}
+                    <Route path="/:page?" component={BlogPostListContainer} /> {/* Must be the last rule or we need to add an "exact" parameter */}
                 </Switch>
             </div >
         );
