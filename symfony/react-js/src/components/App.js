@@ -1,12 +1,13 @@
 import React from 'react';
-import { Route, Switch } from 'react-router'
-import LoginForm from './LoginForm'
-import BlogPostListContainer from './BlogPostListContainer'
-import Header from './Header';
-import BlogPostContainer from './BlogPostContainer';
-import { requests } from '../agent';
-import { connect } from 'react-redux'
-import { userLogout, userProfileFetch, userSetId } from "../actions/actions";
+import {Route, Switch} from "react-router";
+import LoginForm from "./LoginForm";
+import BlogPostListContainer from "./BlogPostListContainer";
+import Header from "./Header";
+import BlogPostContainer from "./BlogPostContainer";
+import {requests} from "../agent";
+import {connect} from "react-redux";
+import {userLogout, userProfileFetch, userSetId} from "../actions/actions";
+import RegistrationContainer from "./RegistrationContainer";
 
 
 const mapStateToProps = state => ({
@@ -54,6 +55,7 @@ class App extends React.Component {
                 <Switch>
                     <Route path="/login" component={LoginForm} />
                     <Route path="/blog-post/:id" component={BlogPostContainer} />
+                    <Route path="/register" component={RegistrationContainer} />
                     <Route path="/:page?" component={BlogPostListContainer} /> {/* Must be the last rule or we need to add an "exact" parameter */}
                 </Switch>
             </div >

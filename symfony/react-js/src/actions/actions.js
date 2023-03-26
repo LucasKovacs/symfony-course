@@ -1,5 +1,5 @@
 import { requests } from "../agent";
-import { BLOG_POST_LIST_REQUEST, BLOG_POST_LIST_RECEIVED, BLOG_POST_LIST_ERROR, BLOG_POST_LIST_ADD, BLOG_POST_REQUEST, BLOG_POST_RECEIVED, BLOG_POST_ERROR, BLOG_POST_UNLOAD, COMMENT_LIST_REQUEST, COMMENT_LIST_RECEIVED, COMMENT_LIST_ERROR, COMMENT_LIST_UNLOAD, COMMENT_ADDED, USER_LOGIN_SUCCESS, USER_PROFILE_REQUEST, USER_PROFILE_ERROR, USER_PROFILE_RECEIVED, USER_SET_ID, USER_LOGOUT, BLOG_POST_LIST_SET_PAGE } from './constants'
+import { BLOG_POST_LIST_REQUEST, BLOG_POST_LIST_RECEIVED, BLOG_POST_LIST_ERROR, BLOG_POST_LIST_ADD, BLOG_POST_REQUEST, BLOG_POST_RECEIVED, BLOG_POST_ERROR, BLOG_POST_UNLOAD, COMMENT_LIST_REQUEST, COMMENT_LIST_RECEIVED, COMMENT_LIST_ERROR, COMMENT_LIST_UNLOAD, COMMENT_ADDED, USER_LOGIN_SUCCESS, USER_PROFILE_REQUEST, USER_PROFILE_ERROR, USER_PROFILE_RECEIVED, USER_SET_ID, USER_LOGOUT, BLOG_POST_LIST_SET_PAGE, USER_REGISTER_SUCCESS, USER_CONFIRMATION_SUCCESS, USER_REGISTER_COMPLETE } from './constants'
 import { SubmissionError } from "redux-form";
 import { parseApiErrors } from "../apiUtils";
 
@@ -78,10 +78,10 @@ export const commentListUnload = (error) => ({
     error
 });
 
-export const commentListFetch = (id) => {
+export const commentListFetch = (id, page = 1) => {
     return (dispatch) => {
         dispatch(commentListRequest());
-        return requests.get(`/blog_posts/${id}/comments`)
+        return requests.get(`/blog_posts/${id}/comments?_page=${page}`)
             .then(response => dispatch(commentListReceived(response)))
             .catch(error => dispatch(commentListError(error)));
     }
@@ -134,6 +134,44 @@ export const userLogout = () => {
         type: USER_LOGOUT
     }
 }
+
+export const userRegisterSuccess = () => {
+    return {
+        type: USER_REGISTER_SUCCESS
+    }
+};
+
+export const userRegister = (username, password, retypedPassword, email, name) => {
+    return (dispatch) => {
+        return requests.post('/users', { username, password, retypedPassword, email, name }, false)
+        .then(() => dispatch(userRegisterSuccess()))
+        .catch(error => {
+            throw new SubmissionError(parseApiErrors(error));
+        });
+    }
+};
+
+export const userConfirmationSuccess = () => {
+    return {
+        type: USER_CONFIRMATION_SUCCESS
+    }
+};
+
+export const userRegisterComplete = () => {
+    return {
+        type: USER_REGISTER_COMPLETE
+    }
+};
+
+export const userConfirm = (confirmationToken) => {
+    return (dispatch) => {
+        return requests.post('/users/confirm', { confirmationToken }, false)
+        .then(() => dispatch(userConfirmationSuccess()))
+        .catch(error => {
+            throw new SubmissionError(parseApiErrors(error));
+        });
+    }
+};
 
 export const userSetId = (userId) => {
     return {

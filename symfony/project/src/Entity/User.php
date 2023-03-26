@@ -55,8 +55,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *  }
  * )
  * @ORM\Entity(repositoryClass=UserRepository::class)
- * @UniqueEntity("username")
- * @UniqueEntity("email")
+ * @UniqueEntity("username", groups={"post", "put"})
+ * @UniqueEntity("email", groups={"post", "put"})
  */
 class User implements UserInterface
 {
