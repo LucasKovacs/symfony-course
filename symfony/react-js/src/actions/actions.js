@@ -1,5 +1,34 @@
 import { requests } from "../agent";
-import { BLOG_POST_LIST_REQUEST, BLOG_POST_LIST_RECEIVED, BLOG_POST_LIST_ERROR, BLOG_POST_LIST_ADD, BLOG_POST_REQUEST, BLOG_POST_RECEIVED, BLOG_POST_ERROR, BLOG_POST_UNLOAD, COMMENT_LIST_REQUEST, COMMENT_LIST_RECEIVED, COMMENT_LIST_ERROR, COMMENT_LIST_UNLOAD, COMMENT_ADDED, USER_LOGIN_SUCCESS, USER_PROFILE_REQUEST, USER_PROFILE_ERROR, USER_PROFILE_RECEIVED, USER_SET_ID, USER_LOGOUT, BLOG_POST_LIST_SET_PAGE, USER_REGISTER_SUCCESS, USER_CONFIRMATION_SUCCESS, USER_REGISTER_COMPLETE } from './constants'
+import {
+    BLOG_POST_ERROR,
+    BLOG_POST_FORM_UNLOAD,
+    BLOG_POST_LIST_ERROR,
+    BLOG_POST_LIST_RECEIVED,
+    BLOG_POST_LIST_REQUEST,
+    BLOG_POST_LIST_SET_PAGE,
+    BLOG_POST_RECEIVED,
+    BLOG_POST_REQUEST,
+    BLOG_POST_UNLOAD,
+    COMMENT_ADDED,
+    COMMENT_LIST_ERROR,
+    COMMENT_LIST_RECEIVED,
+    COMMENT_LIST_REQUEST,
+    COMMENT_LIST_UNLOAD,
+    IMAGE_DELETE_REQUEST,
+    IMAGE_DELETED,
+    IMAGE_UPLOAD_ERROR,
+    IMAGE_UPLOAD_REQUEST,
+    IMAGE_UPLOADED,
+    USER_CONFIRMATION_SUCCESS,
+    USER_LOGIN_SUCCESS,
+    USER_LOGOUT,
+    USER_PROFILE_ERROR,
+    USER_PROFILE_RECEIVED,
+    USER_PROFILE_REQUEST,
+    USER_REGISTER_COMPLETE,
+    USER_REGISTER_SUCCESS,
+    USER_SET_ID
+} from "./constants";
 import { SubmissionError } from "redux-form";
 import { parseApiErrors } from "../apiUtils";
 
@@ -7,14 +36,14 @@ export const blogPostListRequest = () => ({
     type: BLOG_POST_LIST_REQUEST,
 });
 
-export const blogPostListReceived = (data) => ({
-    type: BLOG_POST_LIST_RECEIVED,
-    data
-});
-
 export const blogPostListError = (error) => ({
     type: BLOG_POST_LIST_ERROR,
     error
+});
+
+export const blogPostListReceived = (data) => ({
+    type: BLOG_POST_LIST_RECEIVED,
+    data
 });
 
 export const blogPostListSetPage = (page) => ({
@@ -35,19 +64,18 @@ export const blogPostRequest = () => ({
     type: BLOG_POST_REQUEST,
 });
 
-export const blogPostReceived = (data) => ({
-    type: BLOG_POST_RECEIVED,
-    data
-});
-
 export const blogPostError = (error) => ({
     type: BLOG_POST_ERROR,
     error
 });
 
-export const blogPostUnload = (error) => ({
+export const blogPostReceived = (data) => ({
+    type: BLOG_POST_RECEIVED,
+    data
+});
+
+export const blogPostUnload = () => ({
     type: BLOG_POST_UNLOAD,
-    error
 });
 
 export const blogPostFetch = (id) => {
@@ -59,13 +87,35 @@ export const blogPostFetch = (id) => {
     }
 };
 
-export const commentListRequest = () => ({
-    type: COMMENT_LIST_REQUEST,
+export const blogPostAdd = (title, content, images = []) => {
+    return (dispatch) => {
+        return requests.post(
+            '/blog_posts',
+            {
+                title,
+                content,
+                slug: title && title.replace(/ /g, "-").toLowerCase(),
+                images: images.map(image => `/api/images/${image.id}`)
+            }
+        ).catch((error) => {
+            if (401 === error.response.status) {
+                return dispatch(userLogout());
+            } else if (403 === error.response.status) {
+                throw new SubmissionError({
+                    _error: 'You do not have rights to publish blog posts!'
+                });
+            }
+            throw new SubmissionError(parseApiErrors(error));
+        })
+    }
+};
+
+export const blogPostFormUnload = () => ({
+    type: BLOG_POST_FORM_UNLOAD
 });
 
-export const commentListReceived = (data) => ({
-    type: COMMENT_LIST_RECEIVED,
-    data
+export const commentListRequest = () => ({
+    type: COMMENT_LIST_REQUEST,
 });
 
 export const commentListError = (error) => ({
@@ -73,9 +123,13 @@ export const commentListError = (error) => ({
     error
 });
 
-export const commentListUnload = (error) => ({
+export const commentListReceived = (data) => ({
+    type: COMMENT_LIST_RECEIVED,
+    data
+});
+
+export const commentListUnload = () => ({
     type: COMMENT_LIST_UNLOAD,
-    error
 });
 
 export const commentListFetch = (id, page = 1) => {
@@ -94,17 +148,19 @@ export const commentAdded = (comment) => ({
 
 export const commentAdd = (comment, blogPostId) => {
     return (dispatch) => {
-        return requests.post('/comments', {
-            content: comment,
-            blogPost: `/api/blog_posts/${blogPostId}`
-        }).then(
+        return requests.post(
+            '/comments',
+            {
+                content: comment,
+                blogPost: `/api/blog_posts/${blogPostId}`
+            }
+        ).then(
             response => dispatch(commentAdded(response))
         ).catch((error) => {
             if (401 === error.response.status) {
                 return dispatch(userLogout());
             }
-
-            throw new SubmissionError(parseApiErrors(error))
+            throw new SubmissionError(parseApiErrors(error));
         })
     }
 };
@@ -133,7 +189,7 @@ export const userLogout = () => {
     return {
         type: USER_LOGOUT
     }
-}
+};
 
 export const userRegisterSuccess = () => {
     return {
@@ -144,10 +200,10 @@ export const userRegisterSuccess = () => {
 export const userRegister = (username, password, retypedPassword, email, name) => {
     return (dispatch) => {
         return requests.post('/users', { username, password, retypedPassword, email, name }, false)
-        .then(() => dispatch(userRegisterSuccess()))
-        .catch(error => {
-            throw new SubmissionError(parseApiErrors(error));
-        });
+            .then(() => dispatch(userRegisterSuccess()))
+            .catch(error => {
+                throw new SubmissionError(parseApiErrors(error));
+            });
     }
 };
 
@@ -166,10 +222,12 @@ export const userRegisterComplete = () => {
 export const userConfirm = (confirmationToken) => {
     return (dispatch) => {
         return requests.post('/users/confirm', { confirmationToken }, false)
-        .then(() => dispatch(userConfirmationSuccess()))
-        .catch(error => {
-            throw new SubmissionError(parseApiErrors(error));
-        });
+            .then(() => dispatch(userConfirmationSuccess()))
+            .catch(error => {
+                throw new SubmissionError({
+                    _error: 'Confirmation token is invalid'
+                });
+            });
     }
 };
 
@@ -211,10 +269,51 @@ export const userProfileFetch = (userId) => {
     }
 };
 
-export const blogPostAdd = () => ({
-    type: BLOG_POST_LIST_ADD,
-    data: {
-        id: Math.floor(Math.random() * 100 + 3),
-        title: 'A newly added blog post'
+export const imageUploaded = (data) => {
+    return {
+        type: IMAGE_UPLOADED,
+        image: data
     }
-});
+};
+
+export const imageUploadRequest = () => {
+    return {
+        type: IMAGE_UPLOAD_REQUEST,
+    }
+};
+
+export const imageUploadError = () => {
+    return {
+        type: IMAGE_UPLOAD_ERROR,
+    }
+};
+
+export const imageUpload = (file) => {
+    return (dispatch) => {
+        dispatch(imageUploadRequest());
+        return requests.upload('/images', file)
+            .then(response => dispatch(imageUploaded(response)))
+            .catch(() => dispatch(imageUploadError))
+    }
+};
+
+export const imageDeleteRequest = () => {
+    return {
+        type: IMAGE_DELETE_REQUEST,
+    }
+};
+
+export const imageDelete = (id) => {
+    return (dispatch) => {
+        dispatch(imageDeleteRequest());
+        return requests.delete(`/images/${id}`)
+            .then(() => dispatch(imageDeleted(id)));
+    }
+};
+
+export const imageDeleted = (id) => {
+    return {
+        type: IMAGE_DELETED,
+        imageId: id
+    }
+};

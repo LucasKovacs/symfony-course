@@ -1,10 +1,10 @@
 import React from 'react';
-import { commentListFetch, commentListUnload } from "../actions/actions";
-import { connect } from "react-redux";
-import { CommentList } from "./CommentList";
-import { Spinner } from "./Spinner";
-import CommentForm from './CommentForm';
-import LoadMore from './LoadMore';
+import {commentListFetch, commentListUnload} from "../actions/actions";
+import {connect} from "react-redux";
+import {Spinner} from "./Spinner";
+import {CommentList} from "./CommentList";
+import CommentForm from "./CommentForm";
+import {LoadMore} from "./LoadMore";
 
 const mapeStateToProps = state => ({
     ...state.commentList,

@@ -22,7 +22,7 @@ class RegisterForm extends React.Component {
     }
 
     onTermsAcceptedClick(e) {
-        this.setState(prevState => ({termsAccepted: !prevState.termsAccepted}))
+        this.setState(prevState => ({termsAccepted: !prevState.termsAccepted}));
     }
 
     render() {

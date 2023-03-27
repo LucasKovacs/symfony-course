@@ -1,10 +1,10 @@
 import React from "react";
-import classNames from "classnames"
+import classNames from "classnames";
 
 export class Paginator extends React.Component {
     constructor(props) {
         super(props);
-        const {pageCount} = this.props
+        const {pageCount} = this.props;
         this.range = [];
 
         for (let i = 1; i <= pageCount; i++) {
@@ -26,8 +26,7 @@ export class Paginator extends React.Component {
 
                     {
                         this.range.map(page => {
-                            const onClick = e => {
-                                e.preventDefault();
+                            const onClick = () => {
                                 setPage(page);
                             };
 

@@ -1,7 +1,7 @@
 import React from 'react';
-import { Message } from "./Message";
+import {Message} from "./Message";
 import timeago from 'timeago.js';
-import {CSSTransition, TransitionGroup} from "react-transition-group"
+import {TransitionGroup, CSSTransition} from "react-transition-group";
 
 import "./CommentList.css";
 

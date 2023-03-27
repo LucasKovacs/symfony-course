@@ -12,8 +12,8 @@ export const renderField = ({ input, label, type, meta: { error } }) => {
     return (
         <div className="form-group">
             {label !== null && label !== '' && <label>{label}</label>}
-            {type !== 'textarea' && <input {...input} type={type} className="{classes}" />}
-            {type === 'textarea' && <textarea {...input} className="{classes}" />}
+            {type !== 'textarea' && <input {...input} type={type} className={classes} />}
+            {type === 'textarea' && <textarea {...input} className={classes} />}
             {error && <small className="form-text text-danger">{error}</small>}
         </div>
     );

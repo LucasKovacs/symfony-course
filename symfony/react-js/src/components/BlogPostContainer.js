@@ -1,9 +1,9 @@
 import React from 'react';
-import { blogPostFetch, blogPostUnload } from "../actions/actions";
-import { connect } from "react-redux";
-import { BlogPost } from "./BlogPost";
-import { Spinner } from "./Spinner";
-import CommentListContainer from './CommentListContainer';
+import {blogPostFetch, blogPostUnload} from "../actions/actions";
+import {connect} from "react-redux";
+import {BlogPost} from "./BlogPost";
+import {Spinner} from "./Spinner";
+import CommentListContainer from "./CommentListContainer";
 
 const mapeStateToProps = state => ({
     ...state.blogPost

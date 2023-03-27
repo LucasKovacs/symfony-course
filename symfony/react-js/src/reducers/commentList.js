@@ -1,5 +1,11 @@
-import { COMMENT_LIST_REQUEST, COMMENT_LIST_RECEIVED, COMMENT_LIST_ERROR, COMMENT_LIST_UNLOAD, COMMENT_ADDED } from '../actions/constants'
-import { hydraPageCount } from '../apiUtils';
+import {
+  COMMENT_ADDED,
+  COMMENT_LIST_ERROR,
+  COMMENT_LIST_RECEIVED,
+  COMMENT_LIST_REQUEST,
+  COMMENT_LIST_UNLOAD
+} from "../actions/constants";
+import {hydraPageCount} from "../apiUtils";
 
 export default (state = {
     commentList: null,
@@ -16,8 +22,8 @@ export default (state = {
         case COMMENT_LIST_RECEIVED:
             return {
                 ...state,
-                isFetching: false,
                 commentList: !state.commentList ? action.data['hydra:member'] : state.commentList.concat(action.data['hydra:member']),
+                isFetching: false,
                 currentPage: state.currentPage + 1,
                 pageCount: hydraPageCount(action.data)
             };

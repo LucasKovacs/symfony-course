@@ -1,8 +1,8 @@
 import React from "react";
 import RegisterForm from "./RegisterForm";
-import { connect } from "react-redux";
+import {connect} from "react-redux";
 import ConfirmationForm from "./ConfirmationForm";
-import { userRegisterComplete } from "../actions/actions";
+import {userRegisterComplete} from "../actions/actions";
 
 const mapStateToProps = state => ({
     ...state.registration

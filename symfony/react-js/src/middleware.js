@@ -1,6 +1,6 @@
-import { userLogout } from "./actions/actions";
-import { USER_LOGIN_SUCCESS, USER_LOGOUT, USER_PROFILE_ERROR } from "./actions/constants";
-import { requests } from "./agent";
+import {USER_LOGIN_SUCCESS, USER_LOGOUT, USER_PROFILE_ERROR} from "./actions/constants";
+import {requests} from "./agent";
+import {userLogout} from "./actions/actions";
 
 // Middleware is a curied function, a curied function is a function that return other function
 export const tokenMiddleware = store => next => action => {
@@ -17,7 +17,7 @@ export const tokenMiddleware = store => next => action => {
             break;
         case USER_PROFILE_ERROR:
             const state = store.getState().auth;
-            if (state.userId === action.userId && state.userId === null) {
+            if (state.userId === action.userId && state.userData === null) {
                 store.dispatch(userLogout());
             }
             break;

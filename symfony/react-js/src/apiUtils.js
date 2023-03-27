@@ -5,7 +5,7 @@ export const parseApiErrors = (error) => {
             return parsedErrors;
         },
         {}
-    )
+    );
 };
 
 export const hydraPageCount = (collection) => {
@@ -16,4 +16,13 @@ export const hydraPageCount = (collection) => {
     return Number(
         collection['hydra:view']['hydra:last'].match(/page=(\d+)/)[1]
     );
+};
+
+const canWriteBlogPostRoles = ['ROLE_WRITER', 'ROLE_ADMIN', 'ROLE_SUPERADMIN'];
+
+export const canWriteBlogPost = (userData) => {
+    return null !== userData
+        && userData.roles.some(
+            userRoles => canWriteBlogPostRoles.includes(userRoles)
+        );
 };

@@ -6,12 +6,12 @@ import {commentAdd} from "../actions/actions";
 
 const mapDispatchToProps = {
     commentAdd
-}
+};
 
 class CommentForm extends React.Component {
     onSubmit(values) {
         const {commentAdd, blogPostId, reset} = this.props;
-        return this.props.commentAdd(values.content, blogPostId).then(() => reset());
+        return commentAdd(values.content, blogPostId).then(() => reset());
     }
 
     render() {
@@ -28,7 +28,7 @@ class CommentForm extends React.Component {
                     </form>
                 </div>
             </div>
-        )
+        );
     }
 }
 
